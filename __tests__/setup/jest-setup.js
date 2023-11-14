@@ -9,15 +9,12 @@ const fs = require('fs');
 const globalConfigPath = path.join(__dirname, 'globalConfigMongo.json');
 
 const mongod =
-    global.__MONGOD__ ||
-    new MongoMemoryServer({
-    	autoStart: false,
-    	useUnifiedTopology: true
-    });
+  global.__MONGOD__ ||
+  new MongoMemoryServer({autoStart: false, useUnifiedTopology: true});
 
 module.exports = async () => {
 	await mongod.ensureInstance();
-    
+
 	const mongoConfig = {
 		mongoDBName: 'jest',
 		mongoUri: mongod.getUri()

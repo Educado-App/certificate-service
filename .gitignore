@@ -9,3 +9,4 @@ config/.env
 # enviroment
 .env
 .env.*
+__tests__/setup/globalConfigMongo.json
