@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const creatorCertificateSchema = new Schema({
 	creatorId: {
 		type: Schema.Types.ObjectId,
-		ref: 'creators'
+		ref: 'users'
 	},
 	courseId: {
 		type: Schema.Types.ObjectId,

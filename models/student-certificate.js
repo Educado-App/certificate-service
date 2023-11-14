@@ -6,6 +6,14 @@ const studentCertificateSchema = new Schema({
     type: String,
     required: true
   },
+  courseId: {
+    type: Schema.Types.ObjectId,
+    ref: 'courses'
+  },
+  studentId: {
+		type: Schema.Types.ObjectId,
+		ref: 'users'
+	},
   studentFirstName: {
     type: String,
     required: true,

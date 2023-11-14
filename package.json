@@ -4,8 +4,8 @@
     "description": "Certificate Microservice",
     "main": "index.js",
     "engines": {
-        "node": "16.20.2",
-        "npm": "8.19.4"
+        "node": "v18.17.1",
+        "npm": "10.1.0"
     },
     "scripts": {
         "start": "node index.js",
