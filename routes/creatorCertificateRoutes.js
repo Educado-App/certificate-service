@@ -4,18 +4,13 @@ const mongoose = require('mongoose');
 // Models
 const CreatorCertificateModel = require('../models/creator-certificate');
 
+const checkIds = require('../middlewares/checkIds');
+
 
 // Create creator-certificate route
-router.put("/", async (req, res) => {
+router.put("/", checkIds, async (req, res) => {
   const { creatorId, courseId } = req.body;
 
-  if (!creatorId || !courseId) {
-    return res.status(400).json({ message: "creatorId and courseId are required fields" }); // TODO: Implement error codes
-  }
-
-  if (!mongoose.Types.ObjectId.isValid(creatorId) || !mongoose.Types.ObjectId.isValid(courseId)) {
-    return res.status(400).json({ message: "creatorId and courseId must be valid ObjectIds" }); // TODO: Implement error codes
-  }
 
   // Create new creator-certificate
   const newCreatorCertificate = new CreatorCertificateModel({
@@ -55,8 +50,14 @@ router.get("/", async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(creatorId) || !mongoose.Types.ObjectId.isValid(courseId)) {
       return res.status(400).json({ message: "creatorId and courseId must be valid ObjectIds" }); // TODO: Implement error codes
     }
+
     // Find creator-certificate by creatorId and courseId
     const certificate = await CreatorCertificateModel.findOne({ creatorId, courseId });
+
+    if (!certificate) {
+      return res.status(204).send();
+    }
+
     return res.status(200).send(certificate);
 
   } catch (error) {
@@ -64,6 +65,34 @@ router.get("/", async (req, res) => {
     return res.status(500).json({ message: "No works or something" }); //TODO: Implement errors codes
   }
 
+});
+
+// Delete creator-certificate route
+router.delete("/", async (req, res) => {
+  try {
+    const { creatorId, courseId } = req.body;
+
+    //validate Ids
+    if (!creatorId || !courseId) {
+      return res.status(400).json({ message: "creatorId and courseId are required fields" }); // TODO: Implement error codes
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(creatorId) || !mongoose.Types.ObjectId.isValid(courseId)) {
+      return res.status(400).json({ message: "creatorId and courseId must be valid ObjectIds" }); // TODO: Implement error codes
+    }
+    // Find creator-certificate by creatorId and courseId
+    const certificate = await CreatorCertificateModel.findOneAndDelete({ creatorId, courseId });
+
+    if (!certificate) {
+      return res.status(204).send();
+    }
+
+    return res.status(200).send(certificate);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "No works or something" }); //TODO: Implement errors codes
+  }
 });
 
 module.exports = router;

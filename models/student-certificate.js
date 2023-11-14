@@ -38,7 +38,7 @@ const studentCertificateSchema = new Schema({
         return date < Date.now();
       }
     }
-  },
+  }
 });
 
 const StudentCertificateModel = mongoose.model('student-certificates', studentCertificateSchema);

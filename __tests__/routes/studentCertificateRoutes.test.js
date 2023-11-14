@@ -2,7 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const connectDb = require('../fixtures/db');
 const app = express();
-request = require('supertest');
+const request = require('supertest');
 const router = require('../../routes/studentCertificateRoutes');
 const makeFakeUser = require('../fixtures/fakeUser');
 const makeFakeStudent = require('../fixtures/fakeStudent');
@@ -48,17 +48,38 @@ afterAll(async () => {
 });
 
 describe('GET /', () => {
+  it('Can get specific student certificate', async () => {
+    const anotherFakeCourse = makeFakeCourse();
+    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+
+    const response = await request(baseUrl)
+      .get('/api/student-certificates?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
+      .send({ admin: true })
+
+    expect(response.status).toBe(200);
+    expect(response.body.courseId).toBe(fakeCourse._id.toString());
+    expect(response.body.studentId).toBe(fakeUser._id.toString());
+  });
+
   it('Can get all student certificates', async () => {
     const anotherFakeCourse = makeFakeCourse();
-    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: anotherFakeCourse._id });
     await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: anotherFakeCourse._id });
 
     const response = await request(baseUrl)
       .get('/api/student-certificates')
       .send({ admin: true })
 
     expect(response.status).toBe(200);
-    expect(response.body.length).toBe(2);
+    expect(response.body).toHaveLength(2);
+  });
+
+  it('Returns 204 if certificate does not exist', async () => {
+    const response = await request(baseUrl)
+      .get('/api/student-certificates?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
+
+    expect(response.status).toBe(204);
+    expect(response.body).toEqual({});
   });
 });
 
@@ -67,8 +88,8 @@ describe('PUT /', () => {
   it('Can create student certificate', async () => {
     const response = await request(baseUrl)
       .put('/api/student-certificates')
-      .send({ 
-        studentId: fakeUser._id, 
+      .send({
+        studentId: fakeUser._id,
         courseId: fakeCourse._id,
         courseName: fakeCourse.title,
         studentFirstName: fakeUser.firstName,
@@ -76,12 +97,33 @@ describe('PUT /', () => {
         courseCreator: 'Jacob Terpe',
         estimatedCourseDuration: fakeCourse.estimatedHours,
         dateOfCompletion: new Date()
-       });
+      });
 
-       console.log(response.body);
     expect(response.status).toBe(201);
     const certificate = await db.collection('student-certificates').findOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
     expect(certificate).toBeTruthy();
   });
 });
 
+
+describe('DELETE /', () => {
+  it('Can delete student certificate', async () => {
+    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+
+    const response = await request(baseUrl)
+      .delete('/api/student-certificates' + '?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
+
+    expect(response.status).toBe(200);
+    const certificate = await db.collection('student-certificates').findOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+    expect(certificate).toBeFalsy();
+  });
+
+  it('Returns 204 if certificate does not exist', async () => {
+    await db.collection('student-certificates').deleteMany({});
+
+    const response = await request(baseUrl)
+      .delete('/api/student-certificates' + '?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
+
+    expect(response.status).toBe(204);
+  });
+});
