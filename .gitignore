@@ -1,0 +1,11 @@
+node_modules
+
+*.DS_Store
+dev.js
+config/.env
+*.idea
+.idea
+
+# enviroment
+.env
+.env.*
