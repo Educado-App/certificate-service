@@ -1,3 +1,4 @@
+const StudentCertificateModel = require('../models/student-certificate');
 const CreatorCertificateRoutes = require('../routes/creatorCertificateRoutes');
 const StudentCertificateRoutes = require('../routes/studentCertificateRoutes');
 

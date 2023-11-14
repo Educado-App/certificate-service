@@ -7,6 +7,7 @@ const router = require('../../routes/studentCertificateRoutes');
 const makeFakeUser = require('../fixtures/fakeUser');
 const makeFakeStudent = require('../fixtures/fakeStudent');
 const makeFakeCourse = require('../fixtures/fakeCourse');
+const makeFakeContentCreator = require('../fixtures/fakeContentCreator');
 
 app.use(express.json());
 app.use('/api/student-certificates', router); // replace with actual route
@@ -18,7 +19,11 @@ let db;
 
 const fakeUser = makeFakeUser();
 const fakeStudent = makeFakeStudent(fakeUser._id);
-const fakeCourse = makeFakeCourse();
+
+const anotherFakeUser = makeFakeUser();
+const fakeContentCreator = makeFakeContentCreator(anotherFakeUser._id);
+
+const fakeCourse = makeFakeCourse(anotherFakeUser._id);
 
 beforeAll(async () => {
   db = await connectDb();
@@ -65,14 +70,15 @@ describe('PUT /', () => {
       .send({ 
         studentId: fakeUser._id, 
         courseId: fakeCourse._id,
-        courseName: fakeCourse.courseName,
+        courseName: fakeCourse.title,
         studentFirstName: fakeUser.firstName,
         studentLastName: fakeUser.lastName,
-        courseCreator: fakeCourse.creatorName,
-        estimatedCourseDuration: fakeCourse.estimatedCourseDuration,
+        courseCreator: 'Jacob Terpe',
+        estimatedCourseDuration: fakeCourse.estimatedHours,
         dateOfCompletion: new Date()
-       })
+       });
 
+       console.log(response.body);
     expect(response.status).toBe(201);
     const certificate = await db.collection('student-certificates').findOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
     expect(certificate).toBeTruthy();

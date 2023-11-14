@@ -7,7 +7,16 @@ const StudentCertificateModel = require('../models/student-certificate');
 
 // Create student-certificate route
 router.put("/", async (req, res) => {
-  const { studentId, courseId } = req.body;
+  const {
+    courseName,
+    courseId,
+    studentId,
+    studentFirstName,
+    studentLastName,
+    courseCreator,
+    estimatedCourseDuration,
+    dateOfCompletion,
+  } = req.body;
 
   if (!studentId || !courseId) {
     return res.status(400).json({ message: "studentId and courseId are required fields" }); // TODO: Implement error codes

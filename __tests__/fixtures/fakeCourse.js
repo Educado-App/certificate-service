@@ -1,4 +1,4 @@
-module.exports = function makeFakeCourse() {
+module.exports = function makeFakeCourse(creator) {
 
 	return {
 		title: 'test course',
