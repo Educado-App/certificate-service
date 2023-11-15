@@ -72,6 +72,6 @@ describe('checkIds middleware', () => {
 		checkIds(req, res, next);
 
 		expect(res.status).toHaveBeenCalledWith(400);
-		expect(res.send).toHaveBeenCalledWith({ message: 'creatorId must be a valid ObjectId' });
+		expect(res.send).toHaveBeenCalledWith({ error: { code: 'CE0101', message: 'Field creatorId must be a valid ObjectId' } });
 	});
 });

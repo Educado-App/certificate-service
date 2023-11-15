@@ -29,7 +29,7 @@
     },
     "jest": {
         "verbose": true,
-        "testTimeout": 15000,
+        "testTimeout": 10000,
         "modulePathIgnorePatterns": [
             "<rootDir>/__tests__/fixtures",
             "<rootDir>/__tests__/setup",

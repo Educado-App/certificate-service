@@ -82,16 +82,16 @@ describe('GET /', () => {
 		const response = await request(baseUrl)
 			.get('/api/creator-certificates');
 
-		expect(response.status).toBe(400);
-		expect(response.body).toEqual({ message: 'creatorId and courseId are required fields' });
+		expect(response.status).toBe(401);
+		expect(response.body.error.code).toEqual('CE0200');
 	});
 
 	it('Returns 400 if creatorId or courseId are not valid ObjectIds', async () => {
 		const response = await request(baseUrl)
 			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=123');
 
-		expect(response.status).toBe(400);
-		expect(response.body).toEqual({ message: 'creatorId and courseId must be valid ObjectIds' });
+		expect(response.status).toBe(401);
+		expect(response.body.error.code).toEqual('CE0200');
 	});
 });
 

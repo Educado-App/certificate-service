@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const errorCodes = require('../helpers/errorCodes');
 
 // Middleware for checking if the ids are not null and valid
 module.exports = (req, res, next) => {
@@ -14,7 +15,7 @@ module.exports = (req, res, next) => {
 				return res.status(400).send({ message: `${idField} is required` });
 			}
 			if (!mongoose.Types.ObjectId.isValid(req.body[idField])) {
-				return res.status(400).send({ message: `${idField} must be a valid ObjectId` });
+				return res.status(400).send({ error: errorCodes('CE0101', idField) });
 			}
 		}
     

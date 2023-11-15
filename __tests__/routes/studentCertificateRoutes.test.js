@@ -58,25 +58,38 @@ describe('GET /', () => {
 		expect(response.body.studentId).toBe(fakeUser._id.toString());
 	});
 
-	it('Can get all student certificates', async () => {
-		const anotherFakeCourse = makeFakeCourse();
-		await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
-		await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: anotherFakeCourse._id });
-
-		const response = await request(baseUrl)
-			.get('/api/student-certificates')
-			.send({ admin: true });
-
-		expect(response.status).toBe(200);
-		expect(response.body).toHaveLength(2);
-	});
-
 	it('Returns 204 if certificate does not exist', async () => {
 		const response = await request(baseUrl)
 			.get('/api/student-certificates?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id);
 
 		expect(response.status).toBe(204);
 		expect(response.body).toEqual({});
+	});
+
+	describe('GET / (admin)', () => {
+
+		beforeEach(async () => {
+			const anotherFakeCourse = makeFakeCourse();
+			await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+			await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: anotherFakeCourse._id });
+		});
+
+		it('Can get all student certificates if admin', async () => {
+			const response = await request(baseUrl)
+				.get('/api/student-certificates')
+				.send({ admin: true });
+			
+			expect(response.status).toBe(200);
+			expect(response.body).toHaveLength(2);
+		});
+	
+		it('Returns 401 if not admin', async () => {
+			const response = await request(baseUrl)
+				.get('/api/student-certificates')
+	
+			expect(response.status).toBe(401);
+			expect(response.body.error.code).toBe('CE0200');
+		});
 	});
 });
 
@@ -118,7 +131,7 @@ describe('PUT /', () => {
 			});
 
 		expect(response.status).toBe(400);
-		expect(response.body.message).toBe('a certificate for this course and user already exists');
+		expect(response.body.error.code).toBe('CE0102');
 	});
 
 	it('Returns 400 if any value is missing or null', async () => {
@@ -135,7 +148,7 @@ describe('PUT /', () => {
 			});
 
 		expect(response.status).toBe(400);
-		expect(response.body.message).toBe('student-certificates validation failed: dateOfCompletion: dateOfCompletion is required');
+		expect(response.body.error.code).toBe('CE0100');
 	});
 });
 
