@@ -4,11 +4,13 @@ const { Schema } = mongoose;
 const creatorCertificateSchema = new Schema({
 	creatorId: {
 		type: Schema.Types.ObjectId,
-		ref: 'users'
+		ref: 'users',
+    required: [true, 'creatorId is required'],
 	},
 	courseId: {
 		type: Schema.Types.ObjectId,
-		ref: 'courses'
+		ref: 'courses',
+    required: [true, 'courseId is required'],
 	},
 });
 

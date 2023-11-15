@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 const studentCertificateSchema = new Schema({
   courseName: {
     type: String,
-    required: true
+    required: [true, 'courseName is required']
   },
   courseId: {
     type: Schema.Types.ObjectId,
@@ -16,23 +16,23 @@ const studentCertificateSchema = new Schema({
 	},
   studentFirstName: {
     type: String,
-    required: true,
+    required: [true, 'studentFirstName is required'],
   },
   studentLastName: {
     type: String,
-    required: true,
+    required: [true, 'studentLastName is required'],
   },
   courseCreator: {
     type: String,
-    required: true
+    required: [true, 'courseCreator is required']
   },
   estimatedCourseDuration: {
     type: Number,
-    required: true
+    required: [true, 'estimatedCourseDuration is required']
   },
   dateOfCompletion: {
     type: Date,
-    required: true,
+    required: [true, 'dateOfCompletion is required'],
     validate: {
       validator: function (date) {
         return date < Date.now();

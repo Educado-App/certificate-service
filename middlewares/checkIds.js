@@ -5,6 +5,7 @@ module.exports = (req, res, next) => {
 
   if(req.body.admin) {
     next();
+    return;
   }
 
   for (idField in req.body) {

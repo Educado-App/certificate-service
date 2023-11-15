@@ -103,6 +103,43 @@ describe('PUT /', () => {
     const certificate = await db.collection('student-certificates').findOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
     expect(certificate).toBeTruthy();
   });
+
+  it('Returns 400 if certificate already exists', async () => {
+    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
+
+    const response = await request(baseUrl)
+      .put('/api/student-certificates')
+      .send({
+        studentId: fakeUser._id,
+        courseId: fakeCourse._id,
+        courseName: fakeCourse.title,
+        studentFirstName: fakeUser.firstName,
+        studentLastName: fakeUser.lastName,
+        courseCreator: 'Jacob Terpe',
+        estimatedCourseDuration: fakeCourse.estimatedHours,
+        dateOfCompletion: new Date()
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('a certificate for this course and user already exists');
+  });
+
+  it('Returns 400 if any value is missing or null', async () => {
+    const response = await request(baseUrl)
+      .put('/api/student-certificates')
+      .send({
+        studentId: fakeUser._id,
+        courseId: fakeCourse._id,
+        courseName: fakeCourse.title,
+        studentFirstName: fakeUser.firstName,
+        studentLastName: fakeUser.lastName,
+        courseCreator: 'Jacob Terpe',
+        estimatedCourseDuration: fakeCourse.estimatedHours,
+      });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('student-certificates validation failed: dateOfCompletion: dateOfCompletion is required');
+  });
 });
 
 

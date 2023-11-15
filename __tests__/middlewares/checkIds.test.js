@@ -39,10 +39,10 @@ describe('checkIds middleware', () => {
     expect(next).toHaveBeenCalled();
   });
 
-  it('Returns 400 if id is not present', async () => {
+  it('Returns 400 if id is null', async () => {
     const req = {
       body: {
-        creatorId: new mongoose.Types.ObjectId(),
+        creatorId: null,
       }
     };
     const res = {
@@ -54,6 +54,24 @@ describe('checkIds middleware', () => {
     checkIds(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.send).toHaveBeenCalledWith({ message: 'courseId is required' });
+    expect(res.send).toHaveBeenCalledWith({ message: 'creatorId is required' });
+  });
+
+  it('Returns 400 if id is not valid', async () => {
+    const req = {
+      body: {
+        creatorId: '123',
+      }
+    };
+    const res = {
+      status: jest.fn(() => res),
+      send: jest.fn(),
+    };
+    const next = jest.fn();
+
+    checkIds(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.send).toHaveBeenCalledWith({ message: 'creatorId must be a valid ObjectId' });
   });
 });

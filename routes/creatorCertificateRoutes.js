@@ -3,7 +3,6 @@ const mongoose = require('mongoose');
 
 // Models
 const CreatorCertificateModel = require('../models/creator-certificate');
-
 const checkIds = require('../middlewares/checkIds');
 
 
@@ -11,6 +10,9 @@ const checkIds = require('../middlewares/checkIds');
 router.put("/", checkIds, async (req, res) => {
   const { creatorId, courseId } = req.body;
 
+  if (!creatorId || !courseId) {
+    return res.status(400).json({ message: "creatorId and courseId are required fields" }); // TODO: Implement error codes
+  }
 
   // Create new creator-certificate
   const newCreatorCertificate = new CreatorCertificateModel({
@@ -68,7 +70,7 @@ router.get("/", async (req, res) => {
 });
 
 // Delete creator-certificate route
-router.delete("/", async (req, res) => {
+router.delete("/", checkIds, async (req, res) => {
   try {
     const { creatorId, courseId } = req.body;
 
@@ -77,9 +79,6 @@ router.delete("/", async (req, res) => {
       return res.status(400).json({ message: "creatorId and courseId are required fields" }); // TODO: Implement error codes
     }
 
-    if (!mongoose.Types.ObjectId.isValid(creatorId) || !mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(400).json({ message: "creatorId and courseId must be valid ObjectIds" }); // TODO: Implement error codes
-    }
     // Find creator-certificate by creatorId and courseId
     const certificate = await CreatorCertificateModel.findOneAndDelete({ creatorId, courseId });
 

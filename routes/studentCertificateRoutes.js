@@ -8,6 +8,7 @@ const checkIds = require('../middlewares/checkIds');
 
 // Create student-certificate route
 router.put("/", checkIds, async (req, res) => {
+
   const {
     courseName,
     courseId,
@@ -18,6 +19,7 @@ router.put("/", checkIds, async (req, res) => {
     estimatedCourseDuration,
     dateOfCompletion,
   } = req.body;
+
 
   // Create new creator-certificate
   const newStudentCertificate = new StudentCertificateModel({
@@ -48,7 +50,7 @@ router.put("/", checkIds, async (req, res) => {
 });
 
 // Get specific student-certificate route
-router.get('/', async (req, res) => {
+router.get('/', checkIds, async (req, res) => {
   try {
     const { studentId, courseId } = req.query;
     const { admin } = req.body;
@@ -60,10 +62,6 @@ router.get('/', async (req, res) => {
         return res.status(200).send(list);
       }
       return res.status(400).json({ message: "studentId and courseId are required fields" }); // TODO: Implement error codes
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(400).json({ message: "studentId and courseId must be valid ObjectIds" }); // TODO: Implement error codes
     }
 
     // Find creator-certificate by creatorId and courseId
