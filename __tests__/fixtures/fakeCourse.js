@@ -10,7 +10,8 @@ module.exports = function makeFakeCourse(creator) {
 		sections: [],
 		difficulty: 1,
 		estimatedHours: 1,
+		creator: creator,
 		rating: 5,
-    numOfSubscriptions: 0,
+		numOfSubscriptions: 0,
 	};
 };

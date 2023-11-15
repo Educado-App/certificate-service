@@ -5,12 +5,12 @@ const creatorCertificateSchema = new Schema({
 	creatorId: {
 		type: Schema.Types.ObjectId,
 		ref: 'users',
-    required: [true, 'creatorId is required'],
+		required: [true, 'creatorId is required'],
 	},
 	courseId: {
 		type: Schema.Types.ObjectId,
 		ref: 'courses',
-    required: [true, 'courseId is required'],
+		required: [true, 'courseId is required'],
 	},
 });
 

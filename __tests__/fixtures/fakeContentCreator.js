@@ -1,7 +1,5 @@
-const mongoose = require('mongoose');
-
 module.exports = function makeFakeContentCreator(baseUserId) {
-    return {
-        baseUser: baseUserId,
-    }
-}
+	return {
+		baseUser: baseUserId,
+	};
+};
