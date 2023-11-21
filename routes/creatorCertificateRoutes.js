@@ -39,7 +39,7 @@ router.put('/', checkIds, async (req, res) => {
 router.get('/', async (req, res) => {
 	try {
 		const { creatorId, courseId } = req.query;
-		const { admin } = req.body;
+		const { admin } = req.query;
 
 		if (!mongoose.Types.ObjectId.isValid(creatorId) || !mongoose.Types.ObjectId.isValid(courseId)) {
 			if(admin) {
