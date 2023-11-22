@@ -10,6 +10,10 @@ module.exports = (field, args = null) => {
 			code: 'CE0001',
 			message: `Couldn't connect to database`,
 		},
+		CE002: {
+			code: 'CE0002',
+			message: `${args} not found`,
+		},
 
 		// Validation errors
 		CE0100: {

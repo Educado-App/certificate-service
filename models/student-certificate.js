@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
+// TODO: Course creator should prolly have an id / firstname / lastname as well
 const studentCertificateSchema = new Schema({
 	courseName: {
 		type: String,
