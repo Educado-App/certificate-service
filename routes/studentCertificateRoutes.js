@@ -46,6 +46,7 @@ router.put("/", checkIds, async (req, res) => {
     const savedStudentCertificate = await newStudentCertificate.save();
     return res.status(201).json(savedStudentCertificate);
   } catch (err) {
+    console.log(err);
     if (err.name === 'ValidationError') {
       return res.status(400).json({ error: errorCodes('CE0100', err.path) });
     }
