@@ -51,29 +51,6 @@ router.put("/", checkIds, async (req, res) => {
   }
 });
 
-// Get specific student-certificate
-router.get('/', checkIds, async (req, res) => {
-  try {
-    const { studentId, courseId } = req.query;
-
-    if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
-      return res.status(401).json({ error: errorCodes('CE0200', 'studentId and courseId') });
-    }
-
-    // Find creator-certificate by creatorId and courseId
-    const certificate = await StudentCertificateModel.findOne({ studentId, courseId });
-
-    if (!certificate) {
-      return res.status(204).send();
-    }
-
-    return res.status(200).send(certificate);
-
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ error: errorCodes('CE0001') });
-  }
-});
 
 // Get all certificates for a specific student
 router.get('/student/:id', checkIds, async (req, res) => {

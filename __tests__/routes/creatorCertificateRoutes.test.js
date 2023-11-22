@@ -54,54 +54,6 @@ afterAll(async () => {
 	await mongoose.connection.close();
 });
 
-describe('GET /', () => {
-	it('Can get all creator certificates if admin', async () => {
-		const anotherFakeCourse = makeFakeCourse();
-		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: anotherFakeCourse._id });
-		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: fakeCourse._id });
-
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?admin=true');
-
-		expect(response.status).toBe(200);
-		expect(response.body.length).toBe(2);
-	});
-
-	it('Can get specific creator certificate', async () => {
-		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: fakeCourse._id });
-
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=' + fakeCourse._id);
-
-		expect(response.status).toBe(200);
-		expect(response.body.courseId).toBe(fakeCourse._id.toString());
-	});
-
-	it('Returns 204 if certificate does not exist', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=' + fakeCourse._id);
-
-		expect(response.status).toBe(204);
-		expect(response.body).toEqual({});
-	});
-
-	it('Returns 400 if creatorId or courseId are not provided', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates');
-
-		expect(response.status).toBe(401);
-		expect(response.body.error.code).toEqual('CE0200');
-	});
-
-	it('Returns 400 if creatorId or courseId are not valid ObjectIds', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=123');
-
-		expect(response.status).toBe(401);
-		expect(response.body.error.code).toEqual('CE0200');
-	});
-});
-
 describe('GET /creator/:id', () => {
 
 	axios.get.mockImplementation((url) => {

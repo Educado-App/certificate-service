@@ -48,28 +48,6 @@ afterAll(async () => {
 });
 
 describe('GET /', () => {
-  it('Can get specific student certificate', async () => {
-    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
-    await db.collection('student-certificates').insertOne({ studentId: anotherFakeUser._id, courseId: fakeCourse._id });
-    await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: anotherFakeCourse._id });
-
-    const response = await request(baseUrl)
-      .get('/api/student-certificates?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
-      .send({ admin: true });
-
-    expect(response.status).toBe(200);
-    expect(response.body.courseId).toBe(fakeCourse._id.toString());
-    expect(response.body.studentId).toBe(fakeUser._id.toString());
-  });
-
-  it('Returns 204 if certificate does not exist', async () => {
-    const response = await request(baseUrl)
-      .get('/api/student-certificates?studentId=' + fakeUser._id + '&courseId=' + fakeCourse._id)
-      .send({ admin: true });
-    expect(response.status).toBe(204);
-    expect(response.body).toEqual({});
-  });
-
   it('Can get all student certificates for a specific student', async () => {
     await db.collection('student-certificates').insertOne({ studentId: fakeUser._id, courseId: fakeCourse._id });
     await db.collection('student-certificates').insertOne({ studentId: anotherFakeUser._id, courseId: fakeCourse._id });
