@@ -38,7 +38,11 @@ const studentCertificateSchema = new Schema({
 				return date < Date.now();
 			}
 		}
-	}
+	},
+  courseCategory: {
+    type: String,
+    required: [true, 'courseCategory is required']
+  },
 });
 
 const StudentCertificateModel = mongoose.model('student-certificates', studentCertificateSchema);
