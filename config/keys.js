@@ -15,6 +15,7 @@ const keys = {
 	mongoURI: process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production' ? process.env.MONGO_URI : process.env.MONGO_URI_TEST,
 	bucketKey: process.env.GOOGLE_APPLICATION_CREDENTIALS,
 	TOKEN_SECRET: process.env.TOKEN_SECRET,
+	BACKEND_URL: process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production' ? process.env.BACKEND_URL : 'http://localhost:8888',
 };
 
 module.exports = keys;

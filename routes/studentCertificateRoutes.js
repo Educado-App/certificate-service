@@ -63,7 +63,6 @@ router.get('/', checkIds, async (req, res) => {
 			const certificates = await StudentCertificateModel.find({});
 			return res.status(200).send(certificates);
 		}
-		console.log('test')
 		return res.status(401).json({ error: errorCodes('CE0200', 'creatorId and courseId') });
 	} 
 
