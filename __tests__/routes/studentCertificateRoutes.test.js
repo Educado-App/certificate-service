@@ -74,7 +74,8 @@ describe('PUT /', () => {
         studentLastName: fakeUser.lastName,
         courseCreator: 'Jacob Terpe',
         estimatedCourseDuration: fakeCourse.estimatedHours,
-        dateOfCompletion: new Date()
+        dateOfCompletion: new Date(),
+        courseCategory: fakeCourse.category,
       });
 
     expect(response.status).toBe(201);

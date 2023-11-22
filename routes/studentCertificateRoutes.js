@@ -19,6 +19,7 @@ router.put("/", checkIds, async (req, res) => {
     courseCreator,
     estimatedCourseDuration,
     dateOfCompletion,
+    courseCategory,
   } = req.body;
 
 
@@ -32,6 +33,7 @@ router.put("/", checkIds, async (req, res) => {
     courseCreator,
     estimatedCourseDuration,
     dateOfCompletion,
+    courseCategory,
   });
 
   const duplicate = await StudentCertificateModel.findOne({ studentId: studentId, courseId: courseId });
