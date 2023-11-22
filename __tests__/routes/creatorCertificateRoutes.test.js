@@ -105,7 +105,6 @@ describe('GET /', () => {
 describe('GET /creator/:id', () => {
 
 	axios.get.mockImplementation((url) => {
-		console.log('test')
 		if (url.includes('api/users')) {
 			return { data: fakeUser };
 		} else if (url.includes('api/courses')) {
@@ -122,8 +121,6 @@ describe('GET /creator/:id', () => {
 		const response = await request(baseUrl)
 			.get('/api/creator-certificates/creator/' + fakeUser._id)
 			.send({ token: 'test' });
-
-		console.log(response.body)
 
 		expect(response.status).toBe(200);
 		expect(response.body.length).toBe(2);
