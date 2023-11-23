@@ -8,6 +8,10 @@ const makeFakeUser = require('../fixtures/fakeUser');
 const makeFakeContentCreator = require('../fixtures/fakeContentCreator');
 const makeFakeCourse = require('../fixtures/fakeCourse');
 
+const axios = require('axios');
+
+jest.mock('axios');
+
 app.use(express.json());
 app.use('/api/creator-certificates', router); // replace with actual route
 
@@ -20,6 +24,8 @@ const fakeUser = makeFakeUser();
 const fakeContentCreator = makeFakeContentCreator(fakeUser._id);
 const fakeCourse = makeFakeCourse();
 
+let actualUser;
+
 jest.mock('../../middlewares/checkIds', () => {
 	return (req, res, next) => { next(); };
 });
@@ -31,6 +37,8 @@ beforeAll(async () => {
 beforeEach(async () => {
 	await db.collection('users').insertOne(fakeUser);
 	await db.collection('content-creators').insertOne(fakeContentCreator);
+
+	actualUser = await db.collection('users').findOne({ email: fakeUser.email });
 	await db.collection('courses').insertOne(fakeCourse);
 });
 
@@ -46,55 +54,47 @@ afterAll(async () => {
 	await mongoose.connection.close();
 });
 
-describe('GET /', () => {
-	it('Can get all creator certificates if admin', async () => {
+describe('GET /creator/:id', () => {
+
+	axios.get.mockImplementation((url) => {
+		if (url.includes('api/users')) {
+			return { data: fakeUser };
+		} else if (url.includes('api/courses')) {
+			return { data: fakeCourse };
+		}
+	});
+
+	it('Can get all of a content-creator\'s certificates', async () => {
 		const anotherFakeCourse = makeFakeCourse();
+		anotherFakeCourse._id = new mongoose.Types.ObjectId();
 		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: anotherFakeCourse._id });
 		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: fakeCourse._id });
 
 		const response = await request(baseUrl)
-			.get('/api/creator-certificates')
-			.send({ admin: true });
+			.get('/api/creator-certificates/creator/' + fakeUser._id)
+			.send({ token: 'test' });
 
 		expect(response.status).toBe(200);
 		expect(response.body.length).toBe(2);
-	});
-
-	it('Can get specific creator certificate', async () => {
-		await db.collection('creator-certificates').insertOne({ creatorId: fakeUser._id, courseId: fakeCourse._id });
-
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=' + fakeCourse._id);
-
-		expect(response.status).toBe(200);
-		expect(response.body.courseId).toBe(fakeCourse._id.toString());
-	});
-
-	it('Returns 204 if certificate does not exist', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=' + fakeCourse._id);
-
-		expect(response.status).toBe(204);
-		expect(response.body).toEqual({});
-	});
-
-	it('Returns 400 if creatorId or courseId are not provided', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates');
-
-		expect(response.status).toBe(401);
-		expect(response.body.error.code).toEqual('CE0200');
-	});
-
-	it('Returns 400 if creatorId or courseId are not valid ObjectIds', async () => {
-		const response = await request(baseUrl)
-			.get('/api/creator-certificates?creatorId=' + fakeUser._id + '&courseId=123');
-
-		expect(response.status).toBe(401);
-		expect(response.body.error.code).toEqual('CE0200');
+		response.body.forEach((certificate) => {
+			expect(certificate.creator).toMatchObject({
+				_id: fakeUser._id.toString(),
+				firstName: fakeUser.firstName,
+				lastName: fakeUser.lastName,
+				email: fakeUser.email,
+				joinedAt: fakeUser.joinedAt.toISOString(),
+				dateUpdated: fakeUser.dateUpdated.toISOString(),
+			});
+			expect(certificate.course).toMatchObject({
+				_id: fakeCourse._id.toString(),
+				title: fakeCourse.title,
+				description: fakeCourse.description,
+				dateCreated: fakeCourse.dateCreated,
+				dateUpdated: fakeCourse.dateUpdated,
+			});
+		});
 	});
 });
-
 
 describe('PUT /', () => {
 	it('Can create content creator certificate', async () => {
