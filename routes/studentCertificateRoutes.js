@@ -46,38 +46,41 @@ router.put("/", checkIds, async (req, res) => {
     const savedStudentCertificate = await newStudentCertificate.save();
     return res.status(201).json(savedStudentCertificate);
   } catch (err) {
-		if(err.name === 'ValidationError') {
-			return res.status(400).json({ error: errorCodes('CE0100', err.path) }); 
-		}
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ error: errorCodes('CE0100', err.path) });
+    }
     return res.status(400).send(err);
   }
 });
 
-// Get specific student-certificate route
-router.get('/', checkIds, async (req, res) => {
 
-  const { studentId, courseId } = req.query;
-  const { admin } = req.body;
+// Get all certificates for a specific student
+router.get('/student/:id', checkIds, async (req, res) => {
+  try {
+    // const token = req.header('token');
 
-  //validate Ids
-  if (!mongoose.Types.ObjectId.isValid(studentId) || !mongoose.Types.ObjectId.isValid(courseId)) {
-		if(admin) {
-			const certificates = await StudentCertificateModel.find({});
-			return res.status(200).send(certificates);
-		}
-		console.log('test')
-		return res.status(401).json({ error: errorCodes('CE0200', 'creatorId and courseId') });
-	} 
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(401).json({ error: errorCodes('CE0200', 'studentId') });
+    }
 
-  // Find creator-certificate by creatorId and courseId
-  const certificate = await StudentCertificateModel.findOne({ studentId: studentId, courseId: courseId });
+    const studentId = new mongoose.Types.ObjectId(req.params.id);
 
-  if (!certificate) {
-    return res.status(204).send();
+    // Find student-certificate by studentId and courseId
+    let certificates = await StudentCertificateModel.find({ studentId: studentId });
+
+    if (certificates.length === 0) {
+      return res.status(204).send();
+    }
+
+    return res.status(200).send(certificates);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: errorCodes('CE0001') });
   }
 
-  return res.status(200).send(certificate);
 });
+
 
 // Delete student-certificate route
 router.delete('/', checkIds, async (req, res) => {
@@ -88,14 +91,14 @@ router.delete('/', checkIds, async (req, res) => {
     const certificate = await StudentCertificateModel.findOneAndDelete({ studentId: studentId, courseId: courseId });
 
     if (!certificate) {
-      return res.status(204).send(); 
+      return res.status(204).send();
     }
 
     return res.status(200).send(certificate);
 
   } catch (error) {
     console.log(error);
-    return res.status(500).json({ error: errorCodes('CE0001') }); 
+    return res.status(500).json({ error: errorCodes('CE0001') });
   }
 });
 

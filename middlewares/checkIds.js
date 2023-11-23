@@ -4,7 +4,7 @@ const errorCodes = require('../helpers/errorCodes');
 // Middleware for checking if the ids are not null and valid
 module.exports = (req, res, next) => {
 
-	if(req.params.admin) {
+	if(req.query?.admin || req.body?.admin) {
 		next();
 		return;
 	}
