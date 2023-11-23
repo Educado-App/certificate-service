@@ -57,7 +57,12 @@ router.get('/creator/:id', async (req, res) => {
 			return res.status(204).send();
 		}
 
-		const result = await makeCertificates(certificates, token);
+		const creator = await axios.get(
+			`${BACKEND_URL}/api/users/${creatorId}`,
+			{ headers: { token: token } }
+		);
+
+		const result = await makeCertificates(certificates, token, creator.data);
 
 		return res.status(200).send(result);
 
@@ -93,21 +98,18 @@ router.delete('/', checkIds, async (req, res) => {
 	}
 });
 
-async function makeCertificates(certificateList, token) {
+async function makeCertificates(certificateList, token, creator) {
 	let certificates = [];
 
 	for (let i = 0; i < certificateList.length; i++) {
-		const creator = await axios.get(
-			`${BACKEND_URL}/api/users/${certificateList[i].creatorId}`,
-			{ headers: { token } }
-		);
+
 		const course = await axios.get(
 			`${BACKEND_URL}/api/courses/${certificateList[i].courseId}`,
-			{ headers: { token } }
+			{ headers: { token: token } }
 		);
 
 		const certificate = {
-			creator: creator.data,
+			creator: creator,
 			course: course.data,
 		};
 
