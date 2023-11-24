@@ -23,7 +23,7 @@ router.put("/", checkIds, async (req, res) => {
   } = req.body;
 
 
-  // Create new creator-certificate
+  // Create new student-certificate
   const newStudentCertificate = new StudentCertificateModel({
     courseName,
     courseId,
