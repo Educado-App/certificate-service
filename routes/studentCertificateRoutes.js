@@ -129,7 +129,7 @@ router.post('/download', async (req, res) => {
     courseName: certificate.courseName,
     dateOfCompletion: certificate.dateOfCompletion,
     estimatedCourseDuration: certificate.estimatedCourseDuration,
-  });
+  }, studentId, courseId);
 
   return res.status(200).sendFile(pdfPath);
 });

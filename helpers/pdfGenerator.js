@@ -1,18 +1,22 @@
 const puppeteer = require('puppeteer');
 const { getStudentHtml } = require('./templates');
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto')
 const path = require('path');
 
 // This can be reworked into a global variable if it causes problems with tests.
 const APP_DIR_PATH = path.dirname(require.main.filename);
 
-// Function to generate a unique ID
-function generateUniqueId() {
-  return uuidv4();
-}
-
 // TODO: Make sure this directory exists before writing files to it
 const TEMP_DIRECTORY_PATH = path.join(APP_DIR_PATH, '__temp_certificates__');
+
+// Generate filename as md5 hash of studentId and courseId
+const generateFileName = (studentId, courseId) => {
+  const certificateHash = crypto.createHash('md5')
+    .update(`${studentId}-${courseId}`)
+    .digest("hex");
+  
+  return certificateHash;
+}
 
 /**
  * Generates a PDF for a student certificate
@@ -26,7 +30,7 @@ const TEMP_DIRECTORY_PATH = path.join(APP_DIR_PATH, '__temp_certificates__');
  * }
  * returns filePath: String
  */
-module.exports.generateStudentPDF = async (certificateInfo) => {
+module.exports.generateStudentPDF = async (certificateInfo, studentId, courseId) => {
   // Launch a headless browser
   const browser = await puppeteer.launch();
 
@@ -37,9 +41,9 @@ module.exports.generateStudentPDF = async (certificateInfo) => {
   const htmlContent = await getStudentHtml(certificateInfo);
   await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
 
-  // Generate filename
-  const uniqueId = generateUniqueId();
-  const filePath = path.join(TEMP_DIRECTORY_PATH, `${uniqueId}.pdf`);
+  // Generate filename from certificate info
+  const fileName = generateFileName(studentId, courseId);
+  const filePath = path.join(TEMP_DIRECTORY_PATH, `${fileName}.pdf`);
 
   console.log('Saving with FilePath:', filePath);
 
