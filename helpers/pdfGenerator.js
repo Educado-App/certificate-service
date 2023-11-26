@@ -2,12 +2,17 @@ const puppeteer = require('puppeteer');
 const { getStudentHtml } = require('./templates');
 const crypto = require('crypto')
 const path = require('path');
+const fs = require('fs');
 
 // This can be reworked into a global variable if it causes problems with tests.
-const APP_DIR_PATH = path.dirname(require.main.filename);
+const ROOT_PATH = path.join(__dirname, '..');
 
-// TODO: Make sure this directory exists before writing files to it
-const TEMP_DIRECTORY_PATH = path.join(APP_DIR_PATH, '__temp_certificates__');
+const TEMP_DIRECTORY_PATH = path.join(ROOT_PATH, '__temp_certificates__');
+
+if (!fs.existsSync(TEMP_DIRECTORY_PATH)) {
+  console.log('Creating temp directory:', TEMP_DIRECTORY_PATH);
+  fs.mkdirSync(TEMP_DIRECTORY_PATH);
+}
 
 // Generate filename as md5 hash of studentId and courseId
 const generateFileName = (studentId, courseId) => {
