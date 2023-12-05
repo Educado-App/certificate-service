@@ -1,0 +1,8 @@
+version: '3'
+services:
+  nodejs-app:
+    container_name: educado_backend
+    build:
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=staging

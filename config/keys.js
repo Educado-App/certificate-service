@@ -10,11 +10,8 @@ if (process.env.NODE_ENV === 'production') {
 
 // Access the environment variables
 const keys = {
-	googleClientID: process.env.GOOGLE_CLIENT_ID,
-	googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
-	mongoURI: process.env.NODE_ENV === 'staging' || process.env.NODE_ENV === 'production' ? process.env.MONGO_URI : process.env.MONGO_URI_TEST,
-	bucketKey: process.env.GOOGLE_APPLICATION_CREDENTIALS,
-	TOKEN_SECRET: process.env.TOKEN_SECRET,
+	mongoURI: process.env.MONGO_URI,
+	BACKEND_URL: process.env.BACKEND_URL ?? 'http://localhost:8888',
 };
 
 module.exports = keys;
