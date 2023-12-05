@@ -10,3 +10,5 @@ config/.env
 .env
 .env.*
 __tests__/setup/globalConfigMongo.json
+
+__temp_certificates__
