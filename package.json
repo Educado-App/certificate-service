@@ -9,7 +9,10 @@
     },
     "scripts": {
         "start": "node index.js",
-        "dev": "cross-env NODE_ENV=devel nodemon index.js",
+        "dev": "nodemon index.js",
+        "dev-docker": "docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d",
+        "staging": "docker-compose -f docker-compose.yml -f docker-compose.staging.yml up -d",
+        "stop": "docker-compose down",
         "test": "jest --runInBand",
         "linting": "eslint . --ext .js,.jsx"
     },
