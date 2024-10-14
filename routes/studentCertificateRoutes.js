@@ -38,8 +38,11 @@ router.put("/", checkIds, async (req, res) => {
   });
 
   const duplicate = await StudentCertificateModel.findOne({ studentId: studentId, courseId: courseId });
-
+  if (!studentId && !courseId) {
+    return res.status(400).json({ error: errorCodes('CE0100', 'studentId and courseId') });
+  }
   if (duplicate) {
+    console.log(duplicate);
     return res.status(400).json({ error: errorCodes('CE0102') }); // TODO: Implement error codes
   }
 
