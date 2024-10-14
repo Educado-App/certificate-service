@@ -8,6 +8,7 @@ const corsConfig = {
 		'https://deft-bubblegum-6da164.netlify.app',
 		'http://app-staging.educado.io',
 		'https://app-staging.educado.io',
+		'http://172.30.253.51:8080',	
 	],
 	optionsSuccessStatus: 200,
 	exposedHeaders: ['Content-Range', 'X-Content-Range'],
