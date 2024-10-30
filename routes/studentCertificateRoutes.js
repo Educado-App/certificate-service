@@ -104,9 +104,8 @@ router.delete('/', checkIds, async (req, res) => {
 });
 
 // Generate and download student-certificate
-router.post('/download', async (req, res) => {
+router.get('/download', async (req, res) => {
   let { studentId, courseId } = req.query;
-
   try {
     studentId = new mongoose.Types.ObjectId(studentId);
     courseId = new mongoose.Types.ObjectId(courseId);
