@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const { getStudentHtml } = require('./templates');
+const { getStudentHtml, getCreatorHtml } = require('./templates');
 const crypto = require('crypto')
 const path = require('path');
 const fs = require('fs');
@@ -22,6 +22,52 @@ const generateFileName = (studentId, courseId) => {
   
   return certificateHash;
 }
+
+/**
+ * Generates a PDF for a student certificate
+ * 
+ * certificateInfo: Object {
+    * studentName: String
+    * creatorName: String
+    * courseName: String
+    * dateOfCompletion: Date
+    * estimatedCourseDuration: Number
+ * }
+ * returns filePath: String
+ */
+module.exports.generateCreatorPDF = async (certificateInfo, creatorId, courseId) => {
+  // Launch a headless browser
+  const browser = await puppeteer.launch();
+
+  // Create a new page
+  const page = await browser.newPage();
+
+  // Set the content of the page with your HTML
+  const htmlContent = await getCreatorHtml(certificateInfo);
+  await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+  // Generate filename from certificate info
+  const fileName = generateFileName(creatorId, courseId);
+  const filePath = path.join(TEMP_DIRECTORY_PATH, `${fileName}.pdf`);
+
+  console.log('Saving with FilePath:', filePath);
+
+  // Set the dimensions of the PDF
+  const pdfOptions = {
+    path: filePath,
+    width: '842px',
+    height: '595px',
+  };
+
+  // Generate PDF from the HTML content
+  await page.pdf(pdfOptions);
+
+  // Close the browser
+  await browser.close();
+
+  return filePath;
+}
+
 
 /**
  * Generates a PDF for a student certificate
